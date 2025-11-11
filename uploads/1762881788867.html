@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPhone Quote Generator</title>
+        <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #fff;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Glow Effect */
+        .glow-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 122, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 45, 85, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(52, 199, 89, 0.06) 0%, transparent 50%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            stroke: #fff;
+            stroke-width: 2;
+            stroke-linecap: round;
+            transition: all 0.3s ease;
+        }
+
+        .menu-icon:hover {
+            stroke: #007AFF;
+            transform: scale(1.1);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #007AFF, #5AC8FA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-title svg {
+            width: 20px;
+            height: 20px;
+            fill: url(#gradient);
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #007AFF, #5AC8FA);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+        }
+
+        .profile-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
+        }
+
+        .profile-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+            border-radius: 16px;
+            padding: 25px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(90deg, #007AFF, #5AC8FA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 0;
+            color: #fff;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .modal-item:hover {
+            color: #007AFF;
+            transform: translateX(5px);
+        }
+
+        .modal-item:last-child {
+            border-bottom: none;
+        }
+
+        .modal-item svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            padding: 60px 0;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .welcome-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #fff, #a0a0a0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .welcome-subtitle {
+            font-size: 20px;
+            color: #aaa;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .input-section {
+            background: linear-gradient(145deg, rgba(26, 26, 26, 0.8), rgba(40, 40, 40, 0.8));
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .input-section:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 18px;
+            background: rgba(51, 51, 51, 0.7);
+            border: 1px solid rgba(68, 68, 68, 0.5);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+        }
+
+        .text-input::placeholder {
+            color: #888;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(90deg, #007AFF, #5AC8FA);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 35px;
+            box-shadow: 0 5px 15px rgba(0, 122, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 122, 255, 0.4);
+        }
+
+        .generate-btn:hover::before {
+            left: 100%;
+        }
+
+        .generate-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .settings-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        .setting-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .setting-label {
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #ccc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .setting-label svg {
+            width: 16px;
+            height: 16px;
+            fill: #007AFF;
+        }
+
+        .setting-input {
+            padding: 14px;
+            background: rgba(51, 51, 51, 0.7);
+            border: 1px solid rgba(68, 68, 68, 0.5);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .setting-input:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+        }
+
+        .setting-input option {
+            background: #333;
+        }
+
+        /* Results Section */
+        .results-section {
+            background: linear-gradient(145deg, rgba(26, 26, 26, 0.8), rgba(40, 40, 40, 0.8));
+            border-radius: 20px;
+            padding: 40px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .results-section.fade-in {
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        .results-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            align-self: flex-start;
+            background: linear-gradient(90deg, #fff, #a0a0a0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .loader {
+            border: 4px solid rgba(51, 51, 51, 0.3);
+            border-top: 4px solid #007AFF;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 122, 255, 0.3);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result-image {
+            max-width: 100%;
+            border-radius: 12px;
+            margin: 25px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .result-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 25px;
+            background: linear-gradient(90deg, #007AFF, #5AC8FA);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 122, 255, 0.3);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 122, 255, 0.4);
+        }
+
+        .download-icon {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Footer Styles */
+        .footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 50px 0 30px;
+            margin-top: 60px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #fff;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: linear-gradient(90deg, #007AFF, #5AC8FA);
+        }
+
+        .footer-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #aaa;
+            text-decoration: none;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: #007AFF;
+            transform: translateX(5px);
+        }
+
+        .footer-link svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .copyright {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .language-select {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: rgba(51, 51, 51, 0.7);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .language-select:hover {
+            background: rgba(68, 68, 68, 0.7);
+        }
+
+        .language-select svg {
+            width: 16px;
+            height: 16px;
+            fill: #fff;
+        }
+
+        /* Toast Styles */
+        .toast {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+            border-left: 4px solid #10B981;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            transform: translateX(150%);
+            transition: transform 0.4s ease;
+            z-index: 1001;
+            max-width: 350px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            border-left-color: #EF4444;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .toast-description {
+            font-size: 14px;
+            color: #ccc;
+            line-height: 1.4;
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        .floating-element-1 {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 5%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .floating-element-2 {
+            width: 150px;
+            height: 150px;
+            bottom: 20%;
+            right: 10%;
+            animation: float 12s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .welcome-title {
+                font-size: 36px;
+            }
+            
+            .welcome-subtitle {
+                font-size: 18px;
+            }
+            
+            .input-section {
+                padding: 25px;
+            }
+            
+            .settings-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .toast {
+                right: 15px;
+                left: 15px;
+                max-width: none;
+            }
+            
+            .floating-element {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-title {
+                font-size: 28px;
+            }
+            
+            .input-section {
+                padding: 20px;
+            }
+            
+            .results-section {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="glow-effect"></div>
+    <div class="floating-element floating-element-1"></div>
+    <div class="floating-element floating-element-2"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <svg class="menu-icon" id="menuIcon" viewBox="0 0 24 24">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+                <div class="header-title">
+                    iPhone Quote Generator
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18.71,19.5C17.88,20.74 17,21.95 15.66,21.97C14.32,22 13.89,21.18 12.37,21.18C10.84,21.18 10.37,21.95 9.1,22C7.79,22.05 6.8,20.68 5.96,19.47C4.25,17 2.94,12.45 4.7,9.39C5.57,7.87 7.13,6.91 8.82,6.88C10.1,6.86 11.32,7.75 12.11,7.75C12.89,7.75 14.37,6.68 15.92,6.84C16.57,6.87 18.39,7.1 19.56,8.82C19.47,8.88 17.39,10.1 17.41,12.63C17.44,15.65 20.06,16.66 20.09,16.67C20.06,16.74 19.67,18.11 18.71,19.5ZM13,3.5C13.73,2.67 14.94,2.04 15.94,2C16.07,3.17 15.6,4.35 14.9,5.19C14.21,6.04 13.07,6.7 11.95,6.61C11.8,5.46 12.36,4.26 13,3.5Z" fill="white"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="profile-icon" id="profileIcon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="welcome-section">
+                <div class="welcome-title">Welcome To iPhone</div>
+                <div class="welcome-subtitle">Quote Generator - Buat kutipan menarik dengan tampilan iPhone yang elegan dan realistis</div>
+            </div>
+
+            <div class="input-section">
+                <input type="text" class="text-input" id="textInput" placeholder="Masukan Teks" maxlength="200">
+                <button class="generate-btn" id="generateBtn">Buat</button>
+                
+                <div class="settings-section">
+                    <div class="setting-group">
+                        <label class="setting-label">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M6,8 L6,16 L18,16 L18,10 L14,10 L14,6 L6,6 L6,8 Z M4,6 C4,4.8954305 4.8954305,4 6,4 L14,4 L20,10 L20,16 C20,17.1045695 19.1045695,18 18,18 L6,18 C4.8954305,18 4,17.1045695 4,16 L4,6 Z"/>
+                            </svg>
+                            Baterai
+                        </label>
+                        <input type="text" class="setting-input" id="batteryInput" placeholder="Contoh: 77">
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label class="setting-label">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M17,4 L20,4 C21.1045695,4 22,4.8954305 22,6 L22,18 C22,19.1045695 21.1045695,20 20,20 L4,20 C2.8954305,20 2,19.1045695 2,18 L2,6 C2,4.8954305 2.8954305,4 4,4 L7,4 L7,3 C7,2.44771525 7.44771525,2 8,2 C8.55228475,2 9,2.44771525 9,3 L9,4 L15,4 L15,3 C15,2.44771525 15.4477153,2 16,2 C16.5522847,2 17,2.44771525 17,3 L17,4 Z M4,8 L4,18 L20,18 L20,8 L4,8 Z"/>
+                            </svg>
+                            Provider
+                        </label>
+                        <input type="text" class="setting-input" id="carrierInput" placeholder="Contoh: XL, Telkomsel, Indosat, Axis">
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label class="setting-label">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12,2 C6.4771525,2 2,6.4771525 2,12 C2,17.5228475 6.4771525,22 12,22 C17.5228475,22 22,17.5228475 22,12 C22,6.4771525 17.5228475,2 12,2 Z M12,4 C16.418278,4 20,7.581722 20,12 C20,16.418278 16.418278,20 12,20 C7.581722,20 4,16.418278 4,12 C4,7.581722 7.581722,4 12,4 Z M11,6 L11,13 L17,13 L17,11 L13,11 L13,6 L11,6 Z"/>
+                            </svg>
+                            Jam
+                        </label>
+                        <input type="text" class="setting-input" id="timeInput" placeholder="Contoh: 07:07">
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label class="setting-label">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12,2 C6.486,2 2,6.486 2,12 C2,17.514 6.486,22 12,22 C17.514,22 22,17.514 22,12 C22,6.486 17.514,2 12,2 Z M12,20 C7.589,20 4,16.411 4,12 C4,7.589 7.589,4 12,4 C16.411,4 20,7.589 20,12 C20,16.411 16.411,20 12,20 Z M11,6 L11,12.414 L15.293,16.707 L16.707,15.293 L13,11.586 L13,6 L11,6 Z"/>
+                            </svg>
+                            Signal
+                        </label>
+                        <select class="setting-input" id="signalSelect">
+                            <option value="">Pilih Sinyal</option>
+                            <option value="4">LTE</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-section" id="resultsSection">
+                <div class="results-title">Hasil</div>
+                <div id="result"></div>
+            </div>
+        </div>
+
+
+    <!-- Modal Menu -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">Menu</div>
+            <a href="#" class="modal-item">
+                <svg viewBox="0 0 24 24">
+                    <path d="M10,20 L14,20 L14,14 L20,14 L20,10 L14,10 L14,4 L10,4 L10,10 L4,10 L4,14 L10,14 L10,20 Z"/>
+                </svg>
+                Beranda
+            </a>
+            <a href="#" class="modal-item">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 C17.52,22 22,17.52 22,12 C22,6.48 17.52,2 12,2 Z M12,20 C7.59,20 4,16.41 4,12 C4,7.59 7.59,4 12,4 C16.41,4 20,7.59 20,12 C20,16.41 16.41,20 12,20 Z M13,7 L11,7 L11,13 L17,13 L17,11 L13,11 L13,7 Z"/>
+                </svg>
+                Tentang
+            </a>
+            <a href="#" class="modal-item">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19,3 L5,3 C3.89,3 3,3.9 3,5 L3,19 C3,20.1 3.89,21 5,21 L19,21 C20.1,21 21,20.1 21,19 L21,5 C21,3.9 20.1,3 19,3 Z M19,19 L5,19 L5,5 L19,5 L19,19 Z M7,12 L9,12 L9,17 L7,17 L7,12 Z M11,7 L13,7 L13,17 L11,17 L11,7 Z M15,10 L17,10 L17,17 L15,17 L15,10 Z"/>
+                </svg>
+                Statistik
+            </a>
+            <a href="#" class="modal-item">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12,1 L3,5 L3,11 C3,16.55 6.84,21.74 12,23 C17.16,21.74 21,16.55 21,11 L21,5 L12,1 Z M12,11.99 L19,11.99 C18.47,16.11 15.72,19.78 12,20.93 L12,12 L5,12 L5,6.3 L12,3.19 L12,11.99 Z"/>
+                </svg>
+                Pengaturan
+            </a>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-title" id="toastTitle">Success</div>
+        <div class="toast-description" id="toastDescription">Gambar berhasil di-generate!</div>
+    </div>
+  <script>
+    // DOM Elements
+const textInput = document.getElementById('textInput');
+const generateBtn = document.getElementById('generateBtn');
+const resultsSection = document.getElementById('resultsSection');
+const resultDiv = document.getElementById('result');
+const toast = document.getElementById('toast');
+const toastTitle = document.getElementById('toastTitle');
+const toastDescription = document.getElementById('toastDescription');
+const menuIcon = document.getElementById('menuIcon');
+const modalOverlay = document.getElementById('modalOverlay');
+const profileIcon = document.getElementById('profileIcon');
+
+const batteryInput = document.getElementById('batteryInput');
+const carrierInput = document.getElementById('carrierInput');
+const timeInput = document.getElementById('timeInput');
+const signalSelect = document.getElementById('signalSelect');
+
+// SFX Audio
+const sfxAudio = new Audio('https://www.dropbox.com/scl/fi/4ysnvvg8hgaa8qywym8ou/vestia-zeta-halo-sayang-made-with-Voicemod.mp3?rlkey=zv40q5iczhaqh71mbw5crxr26&st=snypt0gd&dl=1');
+
+// Show Toast Notification
+function showToast(title, description, type = 'success') {
+    toastTitle.textContent = title;
+    toastDescription.textContent = description;
+    toast.className = `toast ${type} show`;
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Get File Size from URL
+async function getFileSize(url) {
+    try {
+        const response = await fetch(url, { method: 'HEAD' });
+        const size = response.headers.get('content-length');
+        return size ? parseFloat(size) / (1024 * 1024).toFixed(2) : null;
+    } catch (error) {
+        console.warn("Gagal mendapatkan ukuran file:", error);
+        return null;
+    }
+}
+
+// Generate Image Function
+async function generateImage() {
+    const message = textInput.value.trim();
+    if (!message) {
+        showToast('Error', 'Harap masukkan teks terlebih dahulu!', 'error');
+        return;
+    }
+
+    // Play SFX
+    sfxAudio.currentTime = 0;
+    sfxAudio.play().catch(error => {
+        console.warn("Gagal memutar SFX:", error);
+    });
+
+    // Get and validate inputs
+    let batteryPercentage = batteryInput.value.trim();
+    let carrierName = carrierInput.value.trim();
+    let timeValue = timeInput.value.trim();
+    let signalStrength = signalSelect.value;
+
+    // Set default values if empty
+    if (!batteryPercentage) batteryPercentage = "77";
+    batteryPercentage = parseInt(batteryPercentage);
+    if (isNaN(batteryPercentage) || batteryPercentage < 0) batteryPercentage = 0;
+    if (batteryPercentage > 100) batteryPercentage = 100;
+
+    if (!carrierName) carrierName = "Telkomsel";
+    carrierName = carrierName.replace(/[^a-zA-Z0-9\s\-\/]/g, '');
+
+    if (!/^\d{1,2}:\d{2}$/.test(timeValue)) {
+        timeValue = "11:11";
+        showToast('Peringatan', 'Format jam harus HH:MM (contoh: 11:11)', 'error');
+    }
+
+    if (!signalStrength) signalStrength = "4";
+
+    // Show loading state
+    resultDiv.innerHTML = `
+        <div class="loader"></div>
+        <p>Sedang memproses...</p>
+    `;
+    resultsSection.style.display = 'flex';
+    resultsSection.classList.add('fade-in');
+
+    // Construct API URL
+    const apiUrl = `https://brat.siputzx.my.id/iphone-quoted?time=${encodeURIComponent(timeValue)}&messageText=${encodeURIComponent(message)}&carrierName=${encodeURIComponent(carrierName)}&batteryPercentage=${batteryPercentage}&signalStrength=${signalStrength}&emojiStyle=apple`;
+
+    // Generate image after delay
+    setTimeout(async () => {
+        const sizeInKB = await getFileSize(apiUrl);
+        const sizeText = sizeInKB ? `${sizeInKB.toFixed(2)} KB` : "Tidak dapat ditentukan";
+
+        // Display result
+        resultDiv.innerHTML = `
+            <p>Preview:</p>
+            <img src="${apiUrl}" alt="Generated Image" class="result-image">
+            <br>
+            <a class="download-btn" id="downloadLink" href="${apiUrl}" download="iphone-quote.png">
+                <svg class="download-icon" viewBox="0 0 24 24">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7,10 12,15 17,10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Download
+            </a>
+        `;
+        showToast('Success', 'Gambar berhasil di-generate!');
+    }, 800);
+}
+
+// Download Image Function
+function downloadImage(imageUrl) {
+    try {
+        const link = document.createElement('a');
+        link.href = imageUrl;
+        link.download = 'iphone-quote.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('Success', 'Gambar berhasil di-download!');
+    } catch (error) {
+        showToast('Error', 'Gagal mendownload gambar. Silakan coba lagi.', 'error');
+        console.error('Download error:', error);
+    }
+}
+
+// Event Listeners
+menuIcon.addEventListener('click', () => {
+    modalOverlay.classList.add('show');
+});
+
+modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) {
+        modalOverlay.classList.remove('show');
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalOverlay.classList.contains('show')) {
+        modalOverlay.classList.remove('show');
+    }
+});
+
+profileIcon.addEventListener('click', () => {
+    window.open('https://peerkenelken-name-saye.vercel.app//', '_blank');
+});
+
+generateBtn.addEventListener('click', generateImage);
+
+textInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') generateImage();
+});
+
+textInput.addEventListener('input', () => {
+    const rem = 200 - textInput.value.length;
+    textInput.style.borderColor = rem < 0 ? '#ef4444' : rem < 20 ? '#f59e0b' : '#4b5563';
+});
+
+batteryInput.addEventListener('input', () => {
+    batteryInput.value = batteryInput.value.replace(/[^0-9]/g, '');
+});
+
+carrierInput.addEventListener('input', () => {
+    carrierInput.value = carrierInput.value.replace(/[^a-zA-Z0-9\s\-\/]/g, '');
+});
+
+// Initialize with current time
+function setCurrentTime() {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    timeInput.value = `${hours}:${minutes}`;
+}
+
+setCurrentTime();
+  </script>
+</body>
+</html>
