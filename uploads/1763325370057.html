@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TugasKu - Web App All-in-One untuk Pelajar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4ade80;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray: #6c757d;
+            --bg-light: #ffffff;
+            --bg-dark: #1a1a2e;
+            --text-light: #333333;
+            --text-dark: #f8f9fa;
+            --card-light: #ffffff;
+            --card-dark: #16213e;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --card-bg: #1e1e1e;
+            --border-color: #333333;
+            --header-bg: linear-gradient(135deg, #0f0f0f 0%, #2d2d2d 100%);
+            --footer-bg: #0a0a0a;
+        }
+
+        [data-theme="midnight"] {
+            --bg-primary: #0a192f;
+            --bg-secondary: #112240;
+            --text-primary: #ccd6f6;
+            --text-secondary: #8892b0;
+            --card-bg: #112240;
+            --border-color: #233554;
+            --header-bg: linear-gradient(135deg, #0a192f 0%, #020c1b 100%);
+            --footer-bg: #020c1b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Efek cahaya halus yang diperbarui */
+        .light-effect {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(76, 201, 240, 0.15) 0%, rgba(76, 201, 240, 0) 70%);
+            pointer-events: none;
+            z-index: -1;
+            animation: float 15s infinite ease-in-out;
+            filter: blur(40px);
+        }
+
+        .light-effect:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .light-effect:nth-child(2) {
+            top: 60%;
+            right: 10%;
+            animation-delay: 5s;
+        }
+
+        .light-effect:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.5;
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+                opacity: 0.7;
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+                opacity: 0.3;
+            }
+        }
+
+        /* Animasi partikel baru */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: rgba(76, 201, 240, 0.5);
+            border-radius: 50%;
+            animation: floatParticle 15s infinite linear;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header Styles */
+        header {
+            background: var(--header-bg);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .logo-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover .logo-img {
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent);
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .theme-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            position: relative;
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .theme-options {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+            z-index: 1001;
+            min-width: 150px;
+            border: 1px solid var(--border-color);
+        }
+
+        .theme-options.active {
+            display: flex;
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .theme-option:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .theme-preview {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .theme-dark { background: linear-gradient(135deg, #121212 0%, #2d2d2d 100%); }
+        .theme-midnight { background: linear-gradient(135deg, #0a192f 0%, #020c1b 100%); }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 150px 0 80px;
+            text-align: center;
+            background: var(--header-bg);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="%23ffffff" opacity="0.05"><polygon points="1000,100 1000,0 0,100"/></svg>');
+            background-size: cover;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .hero-btns {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+            box-shadow: 0 4px 15px rgba(76, 201, 240, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Section Styles */
+        section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        section:nth-child(even) {
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            display: inline-block;
+            position: relative;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* About Section */
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .about-visual {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .device-mockup {
+            width: 300px;
+            height: 500px;
+            background: var(--card-bg);
+            border-radius: 30px;
+            position: relative;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            border: 10px solid var(--border-color);
+            animation: float-device 6s ease-in-out infinite;
+        }
+
+        @keyframes float-device {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .device-screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .device-screen i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Features Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px var(--shadow);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.2);
+        }
+
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        /* Tech Section */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tech-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px var(--shadow);
+            width: 150px;
+            transition: transform 0.3s;
+            border: 1px solid var(--border-color);
+        }
+
+        .tech-item:hover {
+            transform: scale(1.05);
+        }
+
+        .tech-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            transition: transform 0.3s ease;
+        }
+
+        .tech-item:hover .tech-icon {
+            transform: rotate(15deg) scale(1.2);
+        }
+
+        /* Timeline Section */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: var(--primary);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+
+        .timeline-content {
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            transform: translateY(-5px);
+        }
+
+        .timeline-content h3 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            top: 15px;
+            z-index: 1;
+        }
+
+        .timeline-item:nth-child(odd)::after {
+            right: -10px;
+        }
+
+        .timeline-item:nth-child(even)::after {
+            left: -10px;
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .testimonial-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px var(--shadow);
+            max-width: 350px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .rating {
+            color: var(--warning);
+            margin-top: 5px;
+        }
+
+        /* Story Section */
+        .story-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .story-content p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px var(--shadow);
+            min-width: 150px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Roadmap Section */
+        .roadmap-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .roadmap-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease;
+        }
+
+        .roadmap-item:hover {
+            transform: translateX(10px);
+        }
+
+        .roadmap-status {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .status-completed {
+            background-color: var(--success);
+        }
+
+        .status-inprogress {
+            background-color: var(--warning);
+        }
+
+        .roadmap-text {
+            flex: 1;
+        }
+
+        /* Contact Section */
+        .contact-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px var(--shadow);
+            text-align: center;
+            min-width: 200px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .contact-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            transition: transform 0.3s ease;
+        }
+
+        .contact-card:hover .contact-icon {
+            transform: scale(1.2);
+        }
+
+        .contact-card a {
+            color: var(--text-primary);
+            text-decoration: none;
+            display: block;
+            margin-top: 0.5rem;
+            transition: color 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: rgba(76, 201, 240, 0.1);
+        }
+
+        .contact-card a:hover {
+            color: var(--accent);
+            background: rgba(76, 201, 240, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--footer-bg);
+            color: white;
+            padding: 3rem 0 1rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .footer-bottom {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .about-content {
+                flex-direction: column;
+            }
+            
+            .timeline::after {
+                left: 31px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            
+            .timeline-item:nth-child(even) {
+                left: 0;
+            }
+            
+            .timeline-item::after {
+                left: 21px;
+            }
+            
+            .timeline-item:nth-child(odd)::after,
+            .timeline-item:nth-child(even)::after {
+                left: 21px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+            
+            nav {
+                order: 3;
+                width: 100%;
+                margin-top: 1rem;
+                display: none;
+            }
+            
+            nav.active {
+                display: block;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                order: 2;
+            }
+            
+            .theme-selector {
+                order: 1;
+                margin-left: auto;
+                margin-right: 10px;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .hero-btns {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .device-mockup {
+                width: 250px;
+                height: 400px;
+            }
+            
+            .contact-content {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .contact-card {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tech-stack {
+                gap: 1rem;
+            }
+            
+            .tech-item {
+                width: 120px;
+                padding: 1rem;
+            }
+            
+            .stats {
+                gap: 1rem;
+            }
+            
+            .stat-item {
+                min-width: 120px;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <!-- Efek cahaya halus -->
+    <div class="light-effect"></div>
+    <div class="light-effect"></div>
+    <div class="light-effect"></div>
+
+    <!-- Animasi partikel -->
+    <div class="particles-container" id="particles-container"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <img src="https://j.top4top.io/p_36075zi5o0.png" alt="TugasKu Logo" class="logo-img">
+                <span>TugasKu</span>
+            </div>
+            
+            <nav id="main-nav">
+                <ul>
+                    <li><a href="#about">Tentang</a></li>
+                    <li><a href="#features">Fitur</a></li>
+                    <li><a href="#tech">Teknologi</a></li>
+                    <li><a href="#timeline">Versi</a></li>
+                    <li><a href="#story">Cerita</a></li>
+                    <li><a href="#contact">Kontak</a></li>
+                </ul>
+            </nav>
+            
+            <div class="theme-selector">
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="fas fa-palette"></i>
+                </button>
+                <div class="theme-options" id="theme-options">
+                    <div class="theme-option" data-theme="dark">
+                        <div class="theme-preview theme-dark"></div>
+                        <span>Gelap</span>
+                    </div>
+                    <div class="theme-option" data-theme="midnight">
+                        <div class="theme-preview theme-midnight"></div>
+                        <span>Midnight</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>TugasKu – Web App All-in-One untuk Pelajar</h1>
+            <p>Dibuat dari keterbatasan, dikembangkan dengan tekad.</p>
+            <div class="hero-btns">
+                <a href="https://tugas-ku4.vercel.app/" class="btn btn-primary">Kembali ke TugasKu</a>
+                <a href="#about" class="btn btn-secondary">Pelajari Lebih Lanjut</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <div class="section-title">
+                <h2>Tentang TugasKu</h2>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>TugasKu adalah aplikasi web multifungsi berbasis Progressive Web App (PWA) yang dirancang untuk membantu pelajar mengelola tugas, jadwal, catatan, dan pengingat dengan cara yang modern dan efisien.</p>
+                    <p>Ide awal aplikasi ini bermula dari catatan tugas sederhana yang dikembangkan menjadi sistem lengkap dengan berbagai fitur canggih. Filosofi pengembangan kami adalah "simpel tapi berguna" dan "stabil lebih penting dari mewah".</p>
+                    <p>Yang membuat TugasKu unik adalah aplikasi ini dikembangkan sepenuhnya tanpa laptop, tanpa tim, hanya bermodalkan smartphone dan bantuan AI seperti DeepSeek dan ChatGPT. Ini membuktikan bahwa keterbatasan bukan halangan untuk menciptakan karya yang bermanfaat.</p>
+                </div>
+                <div class="about-visual">
+                    <div class="device-mockup">
+                        <div class="device-screen">
+                            <i class="fas fa-tasks"></i>
+                            <h3>TugasKu</h3>
+                            <p>Web App All-in-One untuk Pelajar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" style="background-color: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-title">
+                <h2>Fitur Utama</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h3>Manajemen Tugas</h3>
+                    <p>Tambah, edit, dan hapus tugas dengan sistem deadline kalender yang intuitif.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>Pengingat Otomatis</h3>
+                    <p>Notifikasi sebelum tugas jatuh tempo dengan pilihan waktu pengingat 1-3 hari sebelumnya.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3>Tema Dinamis</h3>
+                    <p>13 variasi tema dengan 3 mode utama (Normal, Gelap, Colorful) untuk pengalaman personal.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h3>Profil Pengguna</h3>
+                    <p>Upload foto profil dengan sistem preview dan crop sebelum disimpan.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-wifi"></i>
+                    </div>
+                    <h3>Mode Offline (PWA)</h3>
+                    <p>Bisa diinstal dan digunakan tanpa koneksi internet dengan teknologi Progressive Web App.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Kalender & Catatan</h3>
+                    <p>Lihat agenda mingguan dan buat catatan harian dengan tampilan yang terorganisir.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>LocalStorage System</h3>
+                    <p>Simpan data langsung di perangkat tanpa perlu membuat akun atau login.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Responsif & Kompatibel</h3>
+                    <p>Tampilan optimal di semua perangkat, dari smartphone hingga desktop.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section id="tech">
+        <div class="container">
+            <div class="section-title">
+                <h2>Teknologi & Struktur</h2>
+            </div>
+            <p style="text-align: center; max-width: 800px; margin: 0 auto 2rem;">
+                TugasKu dibangun dengan teknologi modern namun tetap ringan dan efisien, memastikan performa optimal bahkan di perangkat dengan spesifikasi terbatas.
+            </p>
+            <div class="tech-stack">
+                <div class="tech-item fade-in">
+                    <div class="tech-icon">
+                        <i class="fab fa-html5"></i>
+                    </div>
+                    <span>HTML5</span>
+                </div>
+                <div class="tech-item fade-in">
+                    <div class="tech-icon">
+                        <i class="fab fa-css3-alt"></i>
+                    </div>
+                    <span>CSS3</span>
+                </div>
+                <div class="tech-item fade-in">
+                    <div class="tech-icon">
+                        <i class="fab fa-js-square"></i>
+                    </div>
+                    <span>JavaScript</span>
+                </div>
+                <div class="tech-item fade-in">
+                    <div class="tech-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <span>LocalStorage</span>
+                </div>
+                <div class="tech-item fade-in">
+                    <div class="tech-icon">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <span>Service Worker</span>
+                </div>
+                <div class="tech-item fade-in">
+                    <div class="tech-icon">
+                        <i class="fas fa-file-code"></i>
+                    </div>
+                    <span>Manifest.json</span>
+                </div>
+                <div class="tech-item fade-in">
+                    <div class="tech-icon">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <span>GitHub Pages</span>
+                </div>
+                <div class="tech-item fade-in">
+                    <div class="tech-icon">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <span>Vercel</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section id="timeline" style="background-color: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-title">
+                <h2>Perjalanan Versi</h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item fade-in">
+                    <div class="timeline-content">
+                        <h3>v1.0 – Awal Mula</h3>
+                        <p>Versi pertama dengan fungsi dasar pencatatan tugas sederhana.</p>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-content">
+                        <h3>v3.x – Stabil Awal</h3>
+                        <p>Penambahan fitur jadwal dan tema gelap untuk pengalaman pengguna yang lebih baik.</p>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-content">
+                        <h3>v4.x – Rebuild Besar</h3>
+                        <p>Perombakan sistem dengan penambahan fitur profil pengguna dan navigasi baru.</p>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-content">
+                        <h3>v5.x – Versi Pro</h3>
+                        <p>UI modern, PWA aktif, dan peningkatan stabilitas secara signifikan.</p>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-content">
+                        <h3>v5.9.2 – Release Publik</h3>
+                        <p>Rilis gratis untuk uji publik dan pengumpulan feedback dari pengguna.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials">
+        <div class="container">
+            <div class="section-title">
+                <h2>Penilaian & Respons Pengguna</h2>
+            </div>
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h3 style="font-size: 2rem; color: var(--primary);">9.3/10</h3>
+                <p>Rata-rata penilaian dari ±18 pengguna</p>
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                </div>
+            </div>
+            <div class="testimonials">
+                <div class="testimonial-card fade-in">
+                    <div class="testimonial-text">
+                        "Keren banget tampilannya! Udah kayak aplikasi beneran padahal cuma web app."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">A</div>
+                        <div>
+                            <strong>Andi</strong>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card fade-in">
+                    <div class="testimonial-text">
+                        "Ringan tapi fiturnya lengkap. Cocok banget buat pelajar yang butuh aplikasi sederhana."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">S</div>
+                        <div>
+                            <strong>Sari</strong>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card fade-in">
+                    <div class="testimonial-text">
+                        "Yang paling suka sama fitur temanya, bisa disesuaikan sama mood belajar."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">R</div>
+                        <div>
+                            <strong>Rizki</strong>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Story Section -->
+    <section id="story" style="background-color: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-title">
+                <h2>Dibalik Proyek</h2>
+            </div>
+            <div class="story-content">
+                <p>Perjalanan pengembangan TugasKu dimulai dari keterbatasan. Tanpa laptop, dengan hanya bermodalkan smartphone Oppo A3s dengan penyimpanan terbatas, proyek ini dikembangkan secara otodidak selama lebih dari setahun.</p>
+                <p>Setiap baris kode ditulis dan diuji langsung di perangkat mobile, menghadapi tantangan seperti bug tanpa debugging tool yang memadai dan keterbatasan memori. Namun, dengan bantuan AI seperti DeepSeek dan ChatGPT, setiap masalah berhasil diatasi satu per satu.</p>
+                <p>Filosofi yang dipegang teguh selama pengembangan adalah "Coding bukan soal alat, tapi niat." TugasKu menjadi bukti nyata bahwa dengan tekad dan kreativitas, keterbatasan justru bisa menjadi motivasi untuk menciptakan karya yang bermanfaat.</p>
+                
+                <div class="stats">
+                    <div class="stat-item fade-in">
+                        <div class="stat-number">1+</div>
+                        <div>Tahun Pengembangan</div>
+                    </div>
+                    <div class="stat-item fade-in">
+                        <div class="stat-number">7.2k</div>
+                        <div>Baris Kode</div>
+                    </div>
+                    <div class="stat-item fade-in">
+                        <div class="stat-number">18+</div>
+                        <div>Penguji</div>
+                    </div>
+                    <div class="stat-item fade-in">
+                        <div class="stat-number">5</div>
+                        <div>Versi Utama</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap Section -->
+    <section id="roadmap">
+        <div class="container">
+            <div class="section-title">
+                <h2>Rencana Kedepan</h2>
+            </div>
+            <div class="roadmap-list">
+                <div class="roadmap-item fade-in">
+                    <div class="roadmap-status status-completed">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="roadmap-text">
+                        <h3>Stabilitas Lintas Device</h3>
+                        <p>Optimasi tampilan dan fungsi di berbagai perangkat dan browser.</p>
+                    </div>
+                </div>
+                <div class="roadmap-item fade-in">
+                    <div class="roadmap-status status-completed">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="roadmap-text">
+                        <h3>PWA & Offline Mode</h3>
+                        <p>Implementasi Progressive Web App dengan kemampuan kerja offline.</p>
+                    </div>
+                </div>
+                <div class="roadmap-item fade-in">
+                    <div class="roadmap-status status-inprogress">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div class="roadmap-text">
+                        <h3>Integrasi AI Pendukung Tugas</h3>
+                        <p>Penambahan fitur AI untuk analisis dan bantuan dalam pengerjaan tugas.</p>
+                    </div>
+                </div>
+                <div class="roadmap-item fade-in">
+                    <div class="roadmap-status status-inprogress">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div class="roadmap-text">
+                        <h3>Mode Kalender Interaktif</h3>
+                        <p>Pengembangan kalender dengan fitur drag-and-drop dan integrasi yang lebih baik.</p>
+                    </div>
+                </div>
+                <div class="roadmap-item fade-in">
+                    <div class="roadmap-status status-inprogress">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div class="roadmap-text">
+                        <h3>Versi VVIP (Akun Cloud + Sync)</h3>
+                        <p>Fitur premium dengan sinkronisasi cloud dan backup data otomatis.</p>
+                    </div>
+                </div>
+                <div class="roadmap-item fade-in">
+                    <div class="roadmap-status status-inprogress">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div class="roadmap-text">
+                        <h3>App Store/Play Store Edition</h3>
+                        <p>Pengemasan sebagai aplikasi native untuk distribusi di toko aplikasi.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" style="background-color: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-title">
+                <h2>Kontak & Sosial Media</h2>
+            </div>
+            <p style="text-align: center; max-width: 700px; margin: 0 auto 2rem;">
+                Ada bug? Ide? Saran? Hubungi aku langsung lewat salah satu platform di bawah.
+            </p>
+            <div class="contact-content">
+                <div class="contact-card fade-in">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>Email</h3>
+                    <a href="mailto:rohmatulloh.3609@gmail.com">rohmatulloh.3609@gmail.com</a>
+                </div>
+                <div class="contact-card fade-in">
+                    <div class="contact-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <h3>WhatsApp</h3>
+                    <a href="https://wa.me/6285931109567">+62 859-3110-9567</a>
+                </div>
+                <div class="contact-card fade-in">
+                    <div class="contact-icon">
+                        <i class="fab fa-instagram"></i>
+                    </div>
+                    <h3>Instagram</h3>
+                    <a href="https://www.instagram.com/rahmt_nhw?igsh=MWQwcnB3bTA2ZnVidg==">@rahmt_nhw</a>
+                </div>
+                <div class="contact-card fade-in">
+                    <div class="contact-icon">
+                        <i class="fab fa-telegram"></i>
+                    </div>
+                    <h3>Telegram</h3>
+                    <a href="https://t.me/6285931109567">+62 859-3110-9567</a>
+                </div>
+                <div class="contact-card fade-in">
+                    <div class="contact-icon">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <h3>GitHub</h3>
+                    <a href="https://github.com/RahmatDev">RahmatDev</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="https://i.ibb.co/9HrsBbmF/logo-portofolio.jpg" alt="TugasKu Logo" class="logo-img">
+                    <span>TugasKu</span>
+                </div>
+                <p>TugasKu bukan sekadar aplikasi catatan, tapi bukti bahwa mimpi bisa dibangun dari keterbatasan. Selama ada niat, HP kentang pun bisa jadi mesin pencipta karya.</p>
+                <div class="footer-links">
+                    <a href="https://tugas-ku4.vercel.app/">Kembali ke TugasKu</a>
+                    <a href="#about">Tentang</a>
+                    <a href="#features">Fitur</a>
+                    <a href="#contact">Kontak</a>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2023 TugasKu. Dibuat dengan ❤️ dan tekad.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mainNav = document.getElementById('main-nav');
+        
+        mobileMenuToggle.addEventListener('click', () => {
+            mainNav.classList.toggle('active');
+        });
+        
+        // Theme Switching
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeOptions = document.getElementById('theme-options');
+        const themeOptionButtons = document.querySelectorAll('.theme-option');
+        const body = document.body;
+        
+        themeToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            themeOptions.classList.toggle('active');
+        });
+        
+        themeOptionButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const theme = button.getAttribute('data-theme');
+                body.setAttribute('data-theme', theme);
+                themeOptions.classList.remove('active');
+                
+                // Store theme preference
+                localStorage.setItem('tugasku-theme', theme);
+            });
+        });
+        
+        // Close theme options when clicking outside
+        document.addEventListener('click', () => {
+            themeOptions.classList.remove('active');
+        });
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('tugasku-theme');
+        if (savedTheme) {
+            body.setAttribute('data-theme', savedTheme);
+        }
+        
+        // Scroll Animation
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+        
+        fadeElements.forEach(element => {
+            observer.observe(element);
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    mainNav.classList.remove('active');
+                }
+            });
+        });
+
+        // Particles animation
+        const particlesContainer = document.getElementById('particles-container');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particlesContainer.appendChild(particle);
+        }
+    </script>
+</body>
+</html>
