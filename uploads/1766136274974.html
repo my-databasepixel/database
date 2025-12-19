@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You 🌹</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Itim:wght@400;500;600;700&family=Handlee&family=Sriracha&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-flap: #d46a84;
+            --color-env: #f8e1e9;
+            --color-env2: #D4AFB8;
+            --color-heart: #ff6f91;
+            --color-sparkle: #ffd1dc;
+        }
+
+        body {
+            color: rgb(255, 255, 255);
+            overflow-x: hidden;
+            position: relative;
+            font-family: Itim, cursive;
+            background: rgb(0, 0, 0);
+            z-index: 1;
+        }
+
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            opacity: 0.3;
+            z-index: 0;
+            background: url("https://feeldreams.github.io/wpnime.jpg") center center / cover no-repeat fixed;
+        }
+
+        .kotak {
+            margin: 150px auto 0;
+            transform: scale(0);
+            transition: all 0.7s ease;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: rgba(0, 0, 0, 0.3) 0px 8px 32px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            text-align: center;
+            max-width: 80%;
+            width: 400px;
+            min-height: 200px;
+            position: relative;
+            z-index: 1;
+        }
+
+        #hal1.kotak {
+            transform: scale(1);
+        }
+
+        #hal2 {
+            transform: scale(0);
+            transition: all 0.7s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        #envelope {
+            margin: 150px auto 0;
+            position: relative;
+            width: 160px;
+            height: 110px;
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
+            top: 160px;
+            background-color: var(--color-flap);
+            box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 20px;
+        }
+
+        .front {
+            position: absolute;
+            width: 0;
+            height: 0;
+            z-index: 3;
+        }
+
+        .flap {
+            border-left: 80px solid transparent;
+            border-right: 80px solid transparent;
+            border-bottom: 55px solid transparent;
+            border-top: 55px solid var(--color-flap);
+            transform-origin: center top;
+            pointer-events: none;
+        }
+
+        .pocket {
+            border-left: 80px solid var(--color-env);
+            border-right: 8px solid var(--color-env);
+            border-bottom: 55px solid var(--color-env2);
+            border-top: 55px solid transparent;
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
+        }
+
+        .letter {
+            position: relative;
+            background-color: rgb(224, 217, 221);
+            width: 90%;
+            margin: 0 auto;
+            height: 100%;
+            top: 0%;
+            border-radius: 6px;
+            box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 26px;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .letter::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255, 255, 255, 0) 25%, rgba(255, 231, 236, 0.7) 55%, rgb(255, 231, 236) 100%);
+        }
+
+        .message {
+            position: relative;
+            z-index: 2;
+            font-family: Handlee, cursive;
+            color: rgb(212, 106, 132);
+            text-align: center;
+            line-height: 1;
+            padding-top: 0;
+        }
+
+        .message p {
+            margin: 10px 0;
+            font-size: 1.4em;
+            text-shadow: rgba(0, 0, 0, 0.1) 0px 2px 3px;
+        }
+
+        .envlope-wrapper {
+            height: 210px;
+            margin-top: -50px;
+        }
+
+        .open .flap {
+            transform: rotateX(180deg);
+            transition: transform 0.4s ease, z-index 0.6s ease;
+            z-index: 1;
+        }
+
+        .close .flap {
+            transform: rotateX(0deg);
+            transition: transform 0.4s ease 0.6s, z-index 1s ease;
+            z-index: 5;
+        }
+
+        .close .letter {
+            transform: translateY(0);
+            transition: transform 0.4s ease, z-index 1s ease;
+            z-index: 1;
+        }
+
+        .open .letter {
+            transform: translateY(-40px) rotate(-2.5deg);
+            transition: transform 0.4s ease 0.2s, z-index 0.6s ease;
+            z-index: 2;
+        }
+
+        .letter-corner {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 1px solid rgb(255, 209, 220);
+            border-radius: 2.5px;
+            z-index: 3;
+        }
+
+        .corner-tl {
+            top: 5px;
+            left: 5px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-br {
+            bottom: 5px;
+            right: 5px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .hearts, .sparkles {
+            position: absolute;
+            top: 55px;
+            left: 0;
+            right: 0;
+            z-index: 2;
+        }
+
+        .heart, .sparkle {
+            position: absolute;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .heart::before, .heart::after {
+            content: "";
+            position: absolute;
+            left: 12.5px;
+            top: 0;
+            width: 12.5px;
+            height: 25px;
+            background: var(--color-heart);
+            border-radius: 12.5px 12.5px 0 0;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .heart::after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        .sparkle {
+            width: 4px;
+            height: 4px;
+            background: var(--color-sparkle);
+            border-radius: 50%;
+            animation: 1s ease infinite normal none running sparkleTwinkle;
+        }
+
+        .close .heart, .close .sparkle {
+            opacity: 0;
+            animation: none;
+        }
+
+        .a1 {
+            left: 20%;
+            transform: scale(0.6);
+            animation: 4s linear infinite normal none running slideUp, 2s ease-in-out infinite alternate none running sideSway;
+        }
+
+        .a2 {
+            left: 55%;
+            animation: 5s linear infinite normal none running slideUp, 4s ease-in-out infinite alternate none running sideSway;
+        }
+
+        .a3 {
+            left: 10%;
+            transform: scale(0.8);
+            animation: 7s linear infinite normal none running slideUp, 2s ease-in-out infinite alternate none running sideSway;
+        }
+
+        .s1 {
+            left: 30%;
+            animation: 3s linear infinite normal none running sparkleUp;
+        }
+
+        .s2 {
+            left: 60%;
+            animation: 4s linear infinite normal none running sparkleUp;
+        }
+
+        .s3 {
+            left: 45%;
+            animation: 5s linear infinite normal none running sparkleUp;
+        }
+
+        @keyframes slideUp {
+            0% { top: 0; }
+            100% { top: -600px; }
+        }
+
+        @keyframes sideSway {
+            0% { margin-left: 0; }
+            50% { margin-left: 50px; }
+            100% { margin-left: 0; }
+        }
+
+        @keyframes sparkleUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-500px) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes sparkleTwinkle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.5); }
+        }
+
+        .reset, .tombol {
+            position: relative;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .reset button, .tombol button {
+            font-family: Sriracha, serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background-color: var(--color-flap);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            color: rgb(255, 255, 255);
+            text-shadow: rgba(0, 0, 0, 0.5) 0px 2px 2px;
+            padding: 6px 14px;
+            margin: 10px;
+            font-size: 16px;
+            box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 20px;
+        }
+
+        .reset button:hover, .tombol button:hover {
+            background-color: var(--color-env2);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: rgba(0, 0, 0, 0.2) 0px 7px 25px;
+        }
+
+        .tombol {
+            transform: scale(0);
+            opacity: 0;
+            transition: all 0.7s ease;
+        }
+
+        #hal1 .tombol, #hal3 .tombol {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .pic {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        h1, h2 {
+            font-size: 18px;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .textOverlay {
+            position: relative;
+            margin: auto;
+            width: 100%;
+            min-height: 20px;
+            max-height: 220px;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        #teksCinta {
+            font-size: 16px;
+            color: rgb(255, 255, 255);
+            font-weight: 600;
+        }
+
+        #teksLucu {
+            font-size: 16px;
+            color: rgb(255, 255, 255);
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        #statusGame {
+            margin-top: 25px;
+        }
+
+        button {
+            background: rgb(244, 63, 94);
+            color: rgb(255, 255, 255);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 999px;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: rgb(225, 29, 72);
+        }
+
+        #hal1 .tombol button, #hal3 .tombol button {
+            font-size: 0.9em;
+        }
+
+        .tombolCadangan {
+            background: rgb(107, 114, 128);
+        }
+
+        .tombolCadangan:hover {
+            background: rgb(75, 85, 99);
+        }
+
+        .papanGame {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, auto);
+            gap: 0.5rem;
+            justify-items: center;
+            width: 90%;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .kartu {
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+        }
+
+        .dalemKartu {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s ease;
+            transform-style: preserve-3d;
+        }
+
+        .kartu.balik .dalemKartu {
+            transform: rotateY(180deg);
+        }
+
+        .depanKartu, .belakangKartu {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+        }
+
+        .depanKartu {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .belakangKartu {
+            background: rgba(255, 255, 255, 0.5);
+            transform: rotateY(180deg);
+            font-size: 1.5rem;
+        }
+
+        .sembunyi {
+            display: none !important;
+        }
+
+        .stiker {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 20px;
+            transform: scale(0);
+            transition: all 0.7s ease;
+        }
+
+        .stiker img {
+            width: 100px;
+            height: 100px;
+            box-shadow: rgba(255, 255, 255, 0.3) 0px 4px 30px;
+            backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.7);
+            border: 3px solid rgb(255, 255, 255);
+            border-radius: 50%;
+            padding: 10px;
+        }
+
+        .hati {
+            position: fixed;
+            width: 22px;
+            height: 22px;
+            opacity: 0.65;
+            animation: 7s ease-in-out 0s 1 normal forwards running ngelayang;
+            left: 0;
+            bottom: 0;
+            top: 0;
+            z-index: 0;
+        }
+
+        @keyframes ngelayang {
+            0% { transform: translateY(100vh); opacity: 0.65; }
+            10% { opacity: 0.65; }
+            90% { opacity: 0.65; }
+            100% { transform: translateY(-100vh); opacity: 0; }
+        }
+
+        .hati svg {
+            width: 100%;
+            height: 100%;
+            fill: none;
+            stroke: pink;
+        }
+
+        .wrapper {
+            position: fixed;
+        }
+
+        .circ div {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            background-color: transparent;
+            border: 6px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+        }
+
+        .circ div:nth-child(1) {
+            top: 12%;
+            left: 42%;
+            animation: 10s linear infinite normal none running animate;
+        }
+
+        .circ div:nth-child(2) {
+            top: 70%;
+            left: 50%;
+            animation: 7s linear infinite normal none running animate;
+        }
+
+        .circ div:nth-child(3) {
+            top: 17%;
+            left: 6%;
+            animation: 9s linear infinite normal none running animate;
+        }
+
+        .circ div:nth-child(4) {
+            top: 20%;
+            left: 60%;
+            animation: 10s linear infinite normal none running animate;
+        }
+
+        .circ div:nth-child(5) {
+            top: 67%;
+            left: 10%;
+            animation: 6s linear infinite normal none running animate;
+        }
+
+        .circ div:nth-child(6) {
+            top: 80%;
+            left: 70%;
+            animation: 12s linear infinite normal none running animate;
+        }
+
+        .circ div:nth-child(7) {
+            top: 60%;
+            left: 80%;
+            animation: 15s linear infinite normal none running animate;
+        }
+
+        .circ div:nth-child(8) {
+            top: 32%;
+            left: 25%;
+            animation: 16s linear infinite normal none running animate;
+        }
+
+        .circ div:nth-child(9) {
+            top: 90%;
+            left: 25%;
+            animation: 9s linear infinite normal none running animate;
+        }
+
+        .circ div:nth-child(10) {
+            top: 20%;
+            left: 80%;
+            animation: 5s linear infinite normal none running animate;
+        }
+
+        @keyframes animate {
+            0% { transform: scale(0) translateY(0) rotate(0deg); opacity: 0.8; }
+            100% { transform: scale(1.3) translateY(-90px) rotate(360deg); opacity: 0; }
+        }
+
+        .input-range-container {
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .input-range-container label {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .input-range-container input[type="range"] {
+            width: 80%;
+            accent-color: var(--color-heart);
+            margin-bottom: 20px;
+            appearance: none;
+            height: 8px;
+            background: var(--color-heart);
+            border: 1.5px solid white;
+            border-radius: 5px;
+        }
+
+        .input-range-container input[type="range"]::-webkit-slider-runnable-track {
+            height: 8px;
+            border: 1px solid white;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .input-range-container input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--color-heart);
+            border: 1.5px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-top: -5px;
+        }
+
+        .input-range-container output {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: var(--color-heart);
+        }
+
+        @media (max-width: 600px) {
+            .kotak { width: 80%; padding: 1rem; }
+            #envelope { width: 120px; height: 82.5px; top: 100px; }
+            .flap, .pocket { border-width: 41.25px 60px; }
+            .letter { padding: 10px; }
+            .message p { font-size: 1.2em; }
+            .papanGame { grid-template-columns: repeat(4, 1fr); gap: 1rem 0.2rem; }
+            .kartu { width: 40px; height: 40px; }
+            .belakangKartu { font-size: 1.2rem; }
+            .input-range-container label { font-size: 18px; }
+            .input-range-container input[type="range"] { width: 90%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-overlay"></div>
+
+    <!-- Halaman 1: Permulaan -->
+    <div id="hal1" class="kotak" style="transform: scale(1);">
+        <div id="stiker1" class="stiker" style="transform: scale(1);">
+            <img id="stiker1a" src="https://htmlku.com/0/panda/pusn3.gif">
+            <img id="stiker1b" class="sembunyi" src="https://htmlku.com/0/panda/terlope2.gif">
+        </div>
+        <p style="font-size: 18px;font-weight: 700;">Alooo Kamuuu! 🥳</p>
+        <div class="tombol">
+            <button id="mulaiBtn">Mulai</button>
+        </div>
+    </div>
+
+    <!-- Halaman 2: Envelope -->
+    <div id="hal2" class="sembunyi">
+        <div class="envlope-wrapper">
+            <div id="envelope" class="close">
+                <div class="front flap"></div>
+                <div class="front pocket"></div>
+                <div class="letter">
+                    <div class="letter-corner corner-tl"></div>
+                    <div class="letter-corner corner-br"></div>
+                    <div class="message">
+                        <p>Alooo Kamuu! 💐</p>
+                    </div>
+                </div>
+                <div class="hearts">
+                    <div class="heart a1"></div>
+                    <div class="heart a2"></div>
+                    <div class="heart a3"></div>
+                </div>
+                <div class="sparkles">
+                    <div class="sparkle s1"></div>
+                    <div class="sparkle s2"></div>
+                    <div class="sparkle s3"></div>
+                </div>
+            </div>
+        </div>
+        <div class="reset">
+            <button id="bukaBtn">Buka</button>
+        </div>
+    </div>
+
+    <!-- Halaman 3: Input Tahun Lahir -->
+    <div id="hal3" class="kotak sembunyi">
+        <div id="stiker2" class="stiker">
+            <img id="stiker2a" src="https://htmlku.com/0/panda/pusn2.gif">
+            <img id="stiker2b" class="sembunyi" src="https://htmlku.com/0/panda/terlope2.gif">
+        </div>
+        <div class="input-range-container">
+            <label for="tahunLahir">Tahun Lahir Kamu? 🤔</label>
+            <input type="range" id="tahunLahir" min="1990" max="2020" value="2000">
+            <output id="tahunLahirOutput">2000</output>
+        </div>
+        <div class="tombol">
+            <button id="lanjutTahunBtn">Lanjutkan</button>
+        </div>
+    </div>
+
+    <!-- Halaman 4: Memory Game -->
+    <div id="hal4" class="kotak sembunyi">
+        <canvas id="game-canvas"></canvas>
+        <h2>Memory Game 🎮</h2>
+        <p>Cocokkan kartu² ini yaa! 😋</p>
+        <div id="kotakPesan"></div>
+        <div id="papanGame" class="papanGame"></div>
+        <p id="statusGame"></p>
+        <button id="lanjut" class="sembunyi">Lihat Pesan Cinta!</button>
+        <button id="ulang" class="tombolCadangan sembunyi">Coba Lagi!</button>
+    </div>
+
+    <!-- Halaman 5: Pesan Akhir -->
+    <div id="hal5" class="kotak sembunyi">
+        <canvas id="fireworks-canvas"></canvas>
+        <div id="stiker3" class="stiker">
+            <img id="stiker3a" src="https://htmlku.com/0/panda/panah.gif">
+            <img id="stiker3b" class="sembunyi" src="https://htmlku.com/0/panda/terlope2.gif">
+        </div>
+        <div class="textOverlay">
+            <p id="teksCinta"></p>
+            <p id="pesanAkhir"></p>
+            <p id="teksLucu"></p>
+        </div>
+        <div class="tombol">
+            <button id="balasBtn">Balas</button>
+        </div>
+    </div>
+
+    <div>
+        <div>
+            <div class="circ">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variabel global
+        let tahunLahir = 2000;
+        let kartuDibalik = [];
+        let pasanganDitemukan = 0;
+        const jumlahPasangan = 6;
+        const emojis = ["❤️", "🌸", "🎀", "💝", "🌹", "💌", "🎁", "✨", "💖", "🌺", "🎂", "💐"];
+        let gameDimulai = false;
+
+        // Fungsi untuk berpindah halaman
+        function pindahHalaman(dari, ke) {
+            const halamanDari = document.getElementById(dari);
+            const halamanKe = document.getElementById(ke);
+            
+            // Sembunyikan halaman saat ini
+            halamanDari.classList.add('sembunyi');
+            halamanDari.style.transform = 'scale(0)';
+            
+            // Tampilkan halaman berikutnya
+            setTimeout(() => {
+                halamanKe.classList.remove('sembunyi');
+                halamanKe.style.transform = 'scale(1)';
+                
+                // Animasi stiker
+                const stiker = halamanKe.querySelector('.stiker');
+                if (stiker) {
+                    stiker.style.transform = 'scale(1)';
+                }
+            }, 300);
+        }
+
+        // Fungsi untuk membuka envelope
+        function bukaEnvelope() {
+            const envelope = document.getElementById('envelope');
+            const bukaBtn = document.getElementById('bukaBtn');
+            
+            envelope.classList.remove('close');
+            envelope.classList.add('open');
+            
+            // Ubah teks tombol
+            bukaBtn.textContent = 'Lanjutkan';
+            bukaBtn.removeEventListener('click', bukaEnvelope);
+            bukaBtn.addEventListener('click', () => pindahHalaman('hal2', 'hal3'));
+        }
+
+        // Fungsi untuk update tahun lahir
+        function updateTahunLahir() {
+            const slider = document.getElementById('tahunLahir');
+            const output = document.getElementById('tahunLahirOutput');
+            
+            slider.addEventListener('input', function() {
+                tahunLahir = this.value;
+                output.textContent = tahunLahir;
+            });
+        }
+
+        // Fungsi untuk membuat game memory
+        function buatGameMemory() {
+            const papanGame = document.getElementById('papanGame');
+            const statusGame = document.getElementById('statusGame');
+            const lanjutBtn = document.getElementById('lanjut');
+            const ulangBtn = document.getElementById('ulang');
+            
+            // Reset game
+            papanGame.innerHTML = '';
+            kartuDibalik = [];
+            pasanganDitemukan = 0;
+            gameDimulai = false;
+            statusGame.textContent = 'Balik 2 kartu yang sama!';
+            lanjutBtn.classList.add('sembunyi');
+            ulangBtn.classList.add('sembunyi');
+            
+            // Pilih emoji untuk game
+            const emojiPilihan = [];
+            for (let i = 0; i < jumlahPasangan; i++) {
+                const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+                emojiPilihan.push(emoji, emoji); // 2 kartu dengan emoji sama
+            }
+            
+            // Acak urutan kartu
+            for (let i = emojiPilihan.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [emojiPilihan[i], emojiPilihan[j]] = [emojiPilihan[j], emojiPilihan[i]];
+            }
+            
+            // Buat kartu
+            emojiPilihan.forEach((emoji, index) => {
+                const kartu = document.createElement('div');
+                kartu.className = 'kartu';
+                kartu.dataset.emoji = emoji;
+                kartu.dataset.index = index;
+                
+                const dalemKartu = document.createElement('div');
+                dalemKartu.className = 'dalemKartu';
+                
+                const depanKartu = document.createElement('div');
+                depanKartu.className = 'depanKartu';
+                depanKartu.textContent = '?';
+                
+                const belakangKartu = document.createElement('div');
+                belakangKartu.className = 'belakangKartu';
+                belakangKartu.textContent = emoji;
+                
+                dalemKartu.appendChild(depanKartu);
+                dalemKartu.appendChild(belakangKartu);
+                kartu.appendChild(dalemKartu);
+                papanGame.appendChild(kartu);
+                
+                // Event listener untuk kartu
+                kartu.addEventListener('click', () => balikKartu(kartu));
+            });
+            
+            gameDimulai = true;
+        }
+
+        // Fungsi untuk membalik kartu
+        function balikKartu(kartu) {
+            if (!gameDimulai || kartuDibalik.length >= 2 || kartu.classList.contains('balik')) {
+                return;
+            }
+            
+            kartu.classList.add('balik');
+            kartuDibalik.push(kartu);
+            
+            if (kartuDibalik.length === 2) {
+                const statusGame = document.getElementById('statusGame');
+                statusGame.textContent = 'Memeriksa...';
+                
+                setTimeout(() => {
+                    const kartu1 = kartuDibalik[0];
+                    const kartu2 = kartuDibalik[1];
+                    
+                    if (kartu1.dataset.emoji === kartu2.dataset.emoji) {
+                        // Pasangan ditemukan
+                        pasanganDitemukan++;
+                        statusGame.textContent = `Pasangan ditemukan: ${pasanganDitemukan}/${jumlahPasangan}`;
+                        
+                        // Jika semua pasangan ditemukan
+                        if (pasanganDitemukan === jumlahPasangan) {
+                            const lanjutBtn = document.getElementById('lanjut');
+                            const ulangBtn = document.getElementById('ulang');
+                            
+                            statusGame.textContent = 'Selamat! Kamu berhasil! 🎉';
+                            lanjutBtn.classList.remove('sembunyi');
+                            ulangBtn.classList.remove('sembunyi');
+                            gameDimulai = false;
+                        }
+                    } else {
+                        // Bukan pasangan, balik kembali
+                        kartu1.classList.remove('balik');
+                        kartu2.classList.remove('balik');
+                        statusGame.textContent = 'Coba lagi!';
+                    }
+                    
+                    kartuDibalik = [];
+                }, 1000);
+            }
+        }
+
+        // Fungsi untuk membuat kembang api
+        function buatKembangApi() {
+            const canvas = document.getElementById('fireworks-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set ukuran canvas
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const partikel = [];
+            const warna = ['#ff6f91', '#ffd1dc', '#ff9eb5', '#ffccd5', '#ffb3c1'];
+            
+            // Buat partikel kembang api
+            function buatPartikel(x, y) {
+                for (let i = 0; i < 50; i++) {
+                    partikel.push({
+                        x: x,
+                        y: y,
+                        radius: Math.random() * 3 + 1,
+                        color: warna[Math.floor(Math.random() * warna.length)],
+                        speedX: Math.random() * 6 - 3,
+                        speedY: Math.random() * 6 - 3,
+                        life: 30
+                    });
+                }
+            }
+            
+            // Animasi kembang api
+            function animasi() {
+                requestAnimationFrame(animasi);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Buat kembang api baru secara acak
+                if (Math.random() < 0.05) {
+                    buatPartikel(
+                        Math.random() * canvas.width,
+                        Math.random() * canvas.height / 2
+                    );
+                }
+                
+                // Update dan gambar partikel
+                for (let i = 0; i < partikel.length; i++) {
+                    const p = partikel[i];
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    p.life--;
+                    
+                    // Gambar partikel
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                    
+                    // Hapus partikel yang sudah mati
+                    if (p.life <= 0) {
+                        partikel.splice(i, 1);
+                        i--;
+                    }
+                }
+            }
+            
+            // Mulai animasi
+            animasi();
+            
+            // Update canvas saat window diresize
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        // Fungsi untuk menampilkan pesan cinta
+        function tampilkanPesanCinta() {
+            const teksCinta = document.getElementById('teksCinta');
+            const pesanAkhir = document.getElementById('pesanAkhir');
+            const teksLucu = document.getElementById('teksLucu');
+            
+            const usia = new Date().getFullYear() - tahunLahir;
+            const pesanCinta = [
+                "Untukmu yang spesial... 🌹",
+                "Setiap detik bersamamu adalah anugerah.",
+                "Kamu membuat dunia lebih indah.",
+                "Terima kasih telah menjadi bagian hidupku.",
+                "Aku bersyukur memiliki kamu."
+            ];
+            
+            const pesanLucu = [
+                "Kalau kamu lahir tahun " + tahunLahir + ", berarti usia kamu " + usia + " tahun!",
+                "Jangan lupa tersenyum hari ini! 😊",
+                "Kamu lebih manis dari gula! 🍭",
+                "Semoga harimu penuh warna seperti pelangi! 🌈",
+                "Ingat, kamu adalah bintang yang bersinar! ⭐"
+            ];
+            
+            // Pilih pesan acak
+            const pesan1 = pesanCinta[Math.floor(Math.random() * pesanCinta.length)];
+            const pesan2 = pesanLucu[Math.floor(Math.random() * pesanLucu.length)];
+            
+            teksCinta.textContent = pesan1;
+            pesanAkhir.textContent = "Terima kasih telah bermain!";
+            teksLucu.textContent = pesan2;
+            
+            // Mulai kembang api
+            buatKembangApi();
+        }
+
+        // Event Listeners saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tombol Mulai
+            document.getElementById('mulaiBtn').addEventListener('click', () => {
+                pindahHalaman('hal1', 'hal2');
+            });
+            
+            // Tombol Buka Envelope
+            document.getElementById('bukaBtn').addEventListener('click', bukaEnvelope);
+            
+            // Update tahun lahir
+            updateTahunLahir();
+            
+            // Tombol Lanjut Tahun
+            document.getElementById('lanjutTahunBtn').addEventListener('click', () => {
+                pindahHalaman('hal3', 'hal4');
+                buatGameMemory();
+            });
+            
+            // Tombol Lanjut Game
+            document.getElementById('lanjut').addEventListener('click', () => {
+                pindahHalaman('hal4', 'hal5');
+                tampilkanPesanCinta();
+            });
+            
+            // Tombol Ulang Game
+            document.getElementById('ulang').addEventListener('click', buatGameMemory);
+            
+            // Tombol Balas
+            document.getElementById('balasBtn').addEventListener('click', () => {
+                alert('Pesan telah dikirim! 💖');
+                // Kembali ke halaman awal
+                pindahHalaman('hal5', 'hal1');
+            });
+            
+            // Tambahkan efek hover pada semua tombol
+            const semuaTombol = document.querySelectorAll('button');
+            semuaTombol.forEach(tombol => {
+                tombol.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                });
+                tombol.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+
+        // Animasi latar belakang canvas game
+        window.addEventListener('load', function() {
+            const canvas = document.getElementById('game-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const hati = [];
+            const warnaHati = ['#ff6f91', '#ff9eb5', '#ffccd5', '#ffd1dc'];
+            
+            // Buat hati
+            for (let i = 0; i < 20; i++) {
+                hati.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 10 + 5,
+                    color: warnaHati[Math.floor(Math.random() * warnaHati.length)],
+                    speed: Math.random() * 0.5 + 0.2
+                });
+            }
+            
+            // Gambar hati
+            function gambarHati(x, y, size, color) {
+                ctx.save();
+                ctx.translate(x, y);
+                
+                ctx.beginPath();
+                for (let i = 0; i < 20; i++) {
+                    const angle = i * Math.PI / 10;
+                    const radius = size * (Math.sin(angle) * Math.sin(angle) + 1);
+                    const px = radius * Math.cos(angle);
+                    const py = -radius * Math.sin(angle);
+                    
+                    if (i === 0) {
+                        ctx.moveTo(px, py);
+                    } else {
+                        ctx.lineTo(px, py);
+                    }
+                }
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+                
+                ctx.restore();
+            }
+            
+            // Animasi hati
+            function animasiHati() {
+                requestAnimationFrame(animasiHati);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                hati.forEach(h => {
+                    h.y -= h.speed;
+                    if (h.y < -20) {
+                        h.y = canvas.height + 20;
+                        h.x = Math.random() * canvas.width;
+                    }
+                    
+                    gambarHati(h.x, h.y, h.size, h.color);
+                });
+            }
+            
+            animasiHati();
+            
+            // Update canvas saat window diresize
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        });
+    </script>
+</body>
+</html>
