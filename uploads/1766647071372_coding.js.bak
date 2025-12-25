@@ -1,0 +1,105 @@
+import fs from "fs"
+import path from "path"
+import { exec } from "child_process"
+import { promisify } from "util"
+
+const execAsync = promisify(exec)
+
+const handler = async (m, { conn, command, usedPrefix, text }) => {
+  if (!m.quoted) {
+    return m.reply(
+`╔══⪻𝙋𝙀𝙏𝙐𝙉𝙅𝙐𝙆⪼══╗
+║
+╠⪼𝗖𝗼𝗺𝗺𝗮𝗻𝗱: ${usedPrefix + command} 1p hingga 360p
+╠⪼𝗖𝗮𝗿𝗮 𝗣𝗮𝗸𝗮𝗶:
+║   • reply foto/stiker/video/view-once + caption .burik 50p
+║   • contoh: .burik 144p
+║
+╚═════════════╝`.trim()
+    )
+  }
+
+  // ==== ambil angka pixel dari text: "50p" / "144p" / "200" dll
+  let px = 80 // default
+  const match = String(text || "").trim().match(/(\d{1,3})\s*p?/i)
+  if (match) px = parseInt(match[1], 10)
+  if (isNaN(px)) px = 80
+  if (px < 1) px = 1
+  if (px > 360) px = 360
+
+  const quoted = m.quoted
+
+  // handle view once
+  const isViewOnce = quoted?.message?.viewOnceMessage
+  const msg = isViewOnce ? quoted.message.viewOnceMessage.message : quoted
+
+  const mimetype =
+    msg?.imageMessage?.mimetype ||
+    msg?.videoMessage?.mimetype ||
+    msg?.stickerMessage?.mimetype ||
+    quoted?.mimetype ||
+    (quoted.msg || quoted)?.mimetype ||
+    ""
+
+  const isImage = /image/.test(mimetype)
+  const isVideo = /video/.test(mimetype)
+  const isSticker = /webp/.test(mimetype) || /sticker/.test(mimetype)
+
+  if (!isImage && !isSticker && !isVideo) {
+    return m.reply("Reply foto / stiker / video / view-once dulu ya.")
+  }
+
+  await conn.sendMessage(m.chat, { react: { text: "🤢", key: m.key } })
+
+  const inFile = path.join(process.cwd(), `burik_in_${Date.now()}.bin`)
+  const outImg = path.join(process.cwd(), `burik_out_${Date.now()}.jpg`)
+  const outVid = path.join(process.cwd(), `burik_out_${Date.now()}.mp4`)
+
+  try {
+    const media = await quoted.download()
+    if (!media) throw new Error("Gagal download media")
+    fs.writeFileSync(inFile, media)
+
+    if (isVideo) {
+      // VIDEO: scale + blur + bitrate rendah biar makin burik
+      const cmdVid =
+        `ffmpeg -y -loglevel error -i "${inFile}" ` +
+        `-vf "scale=-2:${px}:flags=neighbor,boxblur=2:1" ` +
+        `-c:v libx264 -preset veryfast -crf 38 -b:v 150k -maxrate 150k -bufsize 300k ` +
+        `-c:a aac -b:a 48k -movflags +faststart "${outVid}"`
+      await execAsync(cmdVid)
+
+      const out = fs.readFileSync(outVid)
+      await conn.sendMessage(
+        m.chat,
+        { video: out, caption: `nih burik ${px}p 🤢😹` },
+        { quoted: m }
+      )
+    } else {
+      // FOTO/STIKER: jadiin jpg burik
+      const cmdImg = `ffmpeg -y -loglevel error -i "${inFile}" -vf "scale=-2:${px}:flags=neighbor,boxblur=2:1" -q:v 31 "${outImg}"`
+      await execAsync(cmdImg)
+
+      const out = fs.readFileSync(outImg)
+      await conn.sendMessage(
+        m.chat,
+        { image: out, caption: `nih burik ${px}p 🤢😹` },
+        { quoted: m }
+      )
+    }
+  } catch (e) {
+    console.error(e)
+    m.reply("Gagal bikin burik.")
+  } finally {
+    if (fs.existsSync(inFile)) fs.unlinkSync(inFile)
+    if (fs.existsSync(outImg)) fs.unlinkSync(outImg)
+    if (fs.existsSync(outVid)) fs.unlinkSync(outVid)
+    await conn.sendMessage(m.chat, { react: { text: "", key: m.key } })
+  }
+}
+
+handler.command = /^(burik|blurik)$/i
+handler.help = ["burik <1p-360p>"]
+handler.tags = ["tools"]
+
+export default handler
